@@ -8,58 +8,137 @@
 package edu.wpi.first.wpilibj.templates;
 
 
-import edu.wpi.first.wpilibj.SimpleRobot;
-import edu.wpi.first.wpilibj.RobotDrive;
+import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.Jaguar;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.RobotDrive;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.buttons.Button;
+import edu.wpi.first.wpilibj.buttons.JoystickButton;
 
 
+//Mecanum class. We are using IterativeRobot as SimpleRobot was not working.
 
-/**
- * The VM is configured to automatically run this class, and to call the
- * functions corresponding to each mode, as described in the SimpleRobot
- * documentation. If you change the name of this class or the package after
- * creating this project, you must also update the manifest file in the resource
- * directory.
- */
-public class RobotTemplate extends SimpleRobot {
+
+public class RobotTemplate extends IterativeRobot {
+    //Global Settings:
+    //PWN Positions
+    private static final int FRONT_LEFT_PWM = 1;
+    private static final int FRONT_RIGHT_PWM = 2;
+    private static final int REAR_LEFT_PWM = 4;
+    private static final int REAR_RIGHT_PWM = 3;
     
-    RobotDrive drivetrain;
-    Joystick moveStick, rotateStick;
+    //Joystick Threshold
+    private static final double THRESHOLD = 0.2;
     
+    
+    //Get the joysticks (keep joy* naming system so it can be adjusted later)
+    //Joystick joy1 = new Joystick(1);
+    Joystick joy2 = new Joystick(2);
+    Joystick joy3 = new Joystick(3);
+    Joystick mXboxController = new Joystick(1);
+    double leftX = mXboxController.getRawAxis(1);
+    double leftY = mXboxController.getRawAxis(2);
+    double rightX = mXboxController.getRawAxis(4);
+    double rightY = mXboxController.getRawAxis(5);
+    boolean trigger = mXboxController.getRawButton(6);
+    //Get the jaguars
+    Jaguar front_right = new Jaguar(FRONT_RIGHT_PWM);
+    Jaguar front_left = new Jaguar(FRONT_LEFT_PWM);
+    Jaguar rear_right = new Jaguar(REAR_RIGHT_PWM);
+    Jaguar rear_left = new Jaguar(REAR_LEFT_PWM);
+    
+    //Setup RobotDrive
+    RobotDrive drive = new RobotDrive(front_right, front_left, rear_right, rear_left);
+   
+        
+    //Button button1L = new JoystickButton(joy1, 1);
+    
+
+    
+    //When robot starts
     public void robotInit() {
-        System.out.println("Joysticks Enabled");
-        drivetrain = new RobotDrive(1,2,3,4);
-        moveStick = new Joystick(1);
-        rotateStick = new Joystick(2);
+        //Invert only the right side motors. Keep the left side normal.
         
+        //Disable the Watchdog as it can cause issues with this version of java.
         
     }
     
-    
-    /**
-     * This function is called once each time the robot enters autonomous mode.
-     */
-    public void autonomous() {
+    //When robot is disabled
+    public void disabledInit() {
+        //Stop the motors for safety
+        front_left.set(0);
+        rear_left.set(0);
+        front_right.set(0);
+        rear_right.set(0);
+        //Log disabled status
         
     }
 
-    /**
-     * This function is called once each time the robot enters operator control.
-     */
-    public void operatorControl() {
-        while(isEnabled()) {
-            drivetrain.mecanumDrive_Polar(moveStick.getX(), moveStick.getY(), rotateStick.getTwist());
-            
-            
-            
+    //Periodically called during autonomous
+    public void autonomousPeriodic() {
+        
+    }
+    
+    //When robot is started in autonomous
+    public void autonomousInit() {
+        //Set the iOS boolean to the opposite of digital input 1.
+        
+        //Log initiation success
+        
+    }
+    
+    //Called at the start of teleop
+    public void teleopInit() {
+        //Log initiation success
+        
+    }
+    
+    //Periodically called during teleop
+    public void teleopPeriodic() {
+       
+       if(mXboxController.getRawButton(6)){
+           
+        drive.tankDrive(leftY, rightY);
+            Timer.delay(0.01);    
+        
+                    
+    }  
+        
+        else{
+           
+            double X, Y, Z;
+        //Check if using iOS interface or not
+        
+        {
+            //Standard controls
+            X = leftX;
+            Z = leftY;
+            Y = rightX;
         }
+        //Threshold
+        if( Math.abs(X) < THRESHOLD ){
+            X = 0;
+        }
+        if( Math.abs(Y) < THRESHOLD ){
+            Y = 0;
+        }
+        if( Math.abs(Z) < THRESHOLD ){
+            Z = 0;
+        }
+        //Get the magnitude using the distance formula
+        double magnitude = Math.sqrt((X*X)+(Y*Y));
+        //Normalize the value
+        if( magnitude > 1 ){
+            magnitude = 1;
+        }
+        //Drive
+        drive.mecanumDrive_Polar( magnitude, mXboxController.getDirectionDegrees(), Z);
+           
+   
+            
+}
+}
 
-    }
-    
-    /**
-     * This function is called once each time the robot enters test mode.
-     */
-    public void test() {
-    
-    }
 }
