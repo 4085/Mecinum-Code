@@ -133,8 +133,11 @@ public class RobotTemplate extends IterativeRobot {
         if( magnitude > 1 ){
             magnitude = 1;
         }
+        
+        double Direction; //Defineing the direction
+                Direction = Math.tan(X/Y); //Tan of pheta is equal to the ajacent over the opposite.
         //Drive
-        drive.mecanumDrive_Polar( magnitude, mXboxController.getDirectionDegrees(), Z);
+        drive.mecanumDrive_Polar( magnitude, Direction, Z);
            
    
             
