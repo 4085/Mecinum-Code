@@ -137,7 +137,7 @@ public class RobotTemplate extends IterativeRobot {
         
         double Direction; //Defineing the direction
         //        Direction = Math.tan(X/Y); //Tan of pheta is equal to the ajacent over the opposite.
-                Direction = MathUtils.atan(Y/X); //Figured out how to do it added a Math(Utils).atan for it to find it!
+                Direction = MathUtils.atan(X/Y); //Figured out how to do it added a Math(Utils).atan for it to find it!
         //Drive
         drive.mecanumDrive_Polar( magnitude, Direction, Z);
            
