@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import com.sun.sqawk.util.MathUtils;
 
 
 //Mecanum class. We are using IterativeRobot as SimpleRobot was not working.
@@ -135,7 +136,8 @@ public class RobotTemplate extends IterativeRobot {
         }
         
         double Direction; //Defineing the direction
-                Direction = Math.tan(X/Y); //Tan of pheta is equal to the ajacent over the opposite.
+        //        Direction = Math.tan(X/Y); //Tan of pheta is equal to the ajacent over the opposite.
+                Direction = MathUtils.atan(Y/X); //Figured out how to do it added a Math(Utils).atan for it to find it!
         //Drive
         drive.mecanumDrive_Polar( magnitude, Direction, Z);
            
